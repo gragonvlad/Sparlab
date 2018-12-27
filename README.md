@@ -59,5 +59,15 @@ Make sure you have all packages installed, including cx_Freeze.
 In powershell inside the __main__ directory, type 'python .\setup.py build' for building executable and 'python .\setup.py bdist_msi' for distributable. 
 
 
+Virtual Bus Driver Install 
+1) Verify that you have Microsoft Visual Studio Community 2017 installed. -https://visualstudio.microsoft.com/downloads/
+
+2) Open admin command prompt, enter 'cd *PATH TO drivers INSERTED HERE*'
+To install: 'devcon.exe install ScpVBus.inf Root\ScpVBus'
+To uninstall:'devcon.exe remove Root\ScpVBus'
+
+
+
+
 For more information, email john.ward@umensch.com 
 
