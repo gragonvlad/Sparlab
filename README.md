@@ -42,6 +42,8 @@ That is for our users to suggest!
 
 Developers
 
+Python version: 3.6.5
+
 This is an open-source project with a general public license. This gives you the freedom to make your own changes and distribute your own copies of Sparlab. 
 
 Contributing: if you submit a pull request and it is accepted, your Github username will be added to the CONTRIBUTORS.txt file on the master branch. 
@@ -49,6 +51,12 @@ Contributing: if you submit a pull request and it is accepted, your Github usern
 Objective: build a tool for fighting gamers to become better fighters without hacking/injecting into frame data. 
 
 Help needed for: built-in Settings & Functions menus, built-in virtual gamepads besides virtual xbox 360 controller (BotController), auto updater (updater.py), joystick recorders that convert input to notation, notation cursor to show what notation is being played in the script (while playing), object detection feature that can accurately predict the X,Y coordinates of each player (for direction detection, hit-boxes, etc.) using ONLY pixel data, health bar readers using ONLY pixel data, and more. Feel free to think of your own ideas for improving Sparlab!  
+
+
+Build/Distrib. 
+
+Make sure you have all packages installed, including cx_Freeze. 
+In powershell inside the __main__ directory, type 'python .\setup.py build' for building executable and 'python .\setup.py bdist_msi' for distributable. 
 
 
 For more information, email john.ward@umensch.com 
