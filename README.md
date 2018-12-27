@@ -44,7 +44,7 @@ Developers
 
 This is an open-source project with a general public license. This gives you the freedom to make your own changes and distribute your own copies of Sparlab. 
 
-Contributing: if you submit a pull request and it is accepted OR your code is used in this repository, your Github username will be added to the CONTRIBUTORS.txt file on the master branch. 
+Contributing: if you submit a pull request and it is accepted, your Github username will be added to the CONTRIBUTORS.txt file on the master branch. 
 
 Objective: build a tool for fighting gamers to become better fighters without hacking/injecting into frame data. 
 
