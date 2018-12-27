@@ -1,0 +1,5 @@
+ {
+  	'game file': 'game.txt',
+  	'joy file': 'joy.txt',
+	'settings file': 'settings.txt'
+}
