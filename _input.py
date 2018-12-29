@@ -90,8 +90,8 @@ class Session_Thread(multiprocessing.Process):
                     try:
                         self.settings = info['settings']
                         self.fps = int(self.settings['fps'])
-                        self.start_delay_t = (float(self.settings['start delay']) / 1000) * self.fps
-                        self.act_int_t = (float(self.settings['ADI']) / 1000) * self.fps
+                        self.start_delay_t = float(self.settings['start delay'])
+                        self.act_int_t = float(self.settings['ADI'])
                         self.defaultdir = self.settings['default direction']
                     except Exception as e:
                         #print("SETTINGS: ", e)
@@ -100,7 +100,8 @@ class Session_Thread(multiprocessing.Process):
                         self.custom_delays = info['delay tuners']
                         #print"new custom delays: ", self.custom_delays)
                         self.fps = int(self.custom_delays['fps'])
-                        self.act_int_t = (float(self.custom_delays['ADI']) / 1000) * self.fps
+                        self.act_int_t = float(self.custom_delays['ADI'])
+                        print("action interval: {}; custom delays: {}".format(self.act_int_t, self.custom_delays))
                     except Exception as e:
                         #print("custom delay error: ", e)
                         pass
@@ -140,6 +141,7 @@ class Session_Thread(multiprocessing.Process):
                                         pass
 
                             if 'play hotkey' not in self.hk_names:
+                                print("play hotkey added")
                                 v = self.settings['play hotkey']
                                 key = keyboard.add_hotkey(str(v), self.toggle_play)
                                 self.hk_names.append('play hotkey')
@@ -151,33 +153,33 @@ class Session_Thread(multiprocessing.Process):
                                 self.hk_names.append('switch sides hotkey')
                                 self.hotkeys.append(key)
 
-                            if 'increase tuner hotkey' not in self.hk_names:
-                                v = self.settings['increase tuner hotkey']
-                                #print'increase tuner appended')
-                                key = keyboard.add_hotkey(str(v), self.increase_tuner)
-                                self.hk_names.append('increase tuner hotkey')
-                                self.hotkeys.append(key)
-
-                            if 'decrease tuner hotkey' not in self.hk_names:
-                                v = self.settings['decrease tuner hotkey']
-                                #print'decrease tuner appended')
-                                key = keyboard.add_hotkey(str(v), self.decrease_tuner)
-                                self.hk_names.append('decrease tuner hotkey')
-                                self.hotkeys.append(key)
-
-                            if 'next tuner hotkey' not in self.hk_names:
-                                v = self.settings['next tuner hotkey']
-                                #print'increase adi hk appended')
-                                key = keyboard.add_hotkey(str(v), self.next_tuner)
-                                self.hk_names.append('next tuner hotkey')
-                                self.hotkeys.append(key)
-
-                            if 'previous tuner hotkey' not in self.hk_names:
-                                v = self.settings['previous tuner hotkey']
-                                #print'previous tuner hk appended')
-                                key = keyboard.add_hotkey(str(v), self.prev_tuner)
-                                self.hk_names.append('previous tuner hotkey')
-                                self.hotkeys.append(key)
+                            # if 'increase tuner hotkey' not in self.hk_names:
+                            #     v = self.settings['increase tuner hotkey']
+                            #     #print'increase tuner appended')
+                            #     key = keyboard.add_hotkey(str(v), self.increase_tuner)
+                            #     self.hk_names.append('increase tuner hotkey')
+                            #     self.hotkeys.append(key)
+                            #
+                            # if 'decrease tuner hotkey' not in self.hk_names:
+                            #     v = self.settings['decrease tuner hotkey']
+                            #     #print'decrease tuner appended')
+                            #     key = keyboard.add_hotkey(str(v), self.decrease_tuner)
+                            #     self.hk_names.append('decrease tuner hotkey')
+                            #     self.hotkeys.append(key)
+                            #
+                            # if 'next tuner hotkey' not in self.hk_names:
+                            #     v = self.settings['next tuner hotkey']
+                            #     #print'increase adi hk appended')
+                            #     key = keyboard.add_hotkey(str(v), self.next_tuner)
+                            #     self.hk_names.append('next tuner hotkey')
+                            #     self.hotkeys.append(key)
+                            #
+                            # if 'previous tuner hotkey' not in self.hk_names:
+                            #     v = self.settings['previous tuner hotkey']
+                            #     #print'previous tuner hk appended')
+                            #     key = keyboard.add_hotkey(str(v), self.prev_tuner)
+                            #     self.hk_names.append('previous tuner hotkey')
+                            #     self.hotkeys.append(key)
 
 
                             for k,v in self.joycfg.items():
@@ -214,8 +216,8 @@ class Session_Thread(multiprocessing.Process):
                             self.hk_names = []
                             self.pending = []
                     except Exception as e:
-                        #print("HKS: ", e)
-                        pass
+                        print("HKS: ", e)
+                        #pass
 
 
             except Exception as e:
@@ -246,13 +248,12 @@ class Session_Thread(multiprocessing.Process):
                 self.start_delay()
                 for string in self.strings:
                     #print"string: ", string)
-                    self.handle_pending()
                     self.parse_action(string)
                     try:
                         self.joy.action_interval(self.act_int_t, ignore=self.iai)
                     except Exception as e:
-                        #print("ACTION INTERVAL ERROR: ", e)
-                        pass
+                        print("ACTION INTERVAL ERROR: ", e)
+                        #pass
 
             self.iai = False
 
@@ -284,16 +285,17 @@ class Session_Thread(multiprocessing.Process):
         # only execute action if the hks are on (they are on whenever controller is on)
         if self.hks_on == True:
             if hk == False:
-                #((notation, image, string))
+                #((notation, string))
                 try:
-                    iterstring = eval(string[2])
+                    iterstring = eval(string[1])
                 except Exception as e:
-                    iterstring = string[2]
+                    iterstring = string[1]
 
 
                 if iterstring in list(self.custom_delays):
                     f = self.custom_delays[iterstring]
-                    t = (float(f) / 1000) * self.fps
+                    t = float(f)
+                    print("iterstring: {}, t: {}".format(iterstring, t))
                     #print"f = {}; delay for: {}".format(f,t))
                     self.joy.delay_for(t)
                     return
@@ -303,9 +305,16 @@ class Session_Thread(multiprocessing.Process):
                         #print"a: ", a)
                         self.processIncoming()
                         # print("(AUTO) a: {}".format(a))
-                        if a in list(self.settings):
+                        if a in list(self.settings) and a != 'j_f' and 'delay' not in a:
                             # print("{} settings: {}".format(a, self.settings[a]))
                             cfg = self.settings[a]
+                        elif a == 'j_f':
+                            cfg = self.fps
+                            print("fps: ", cfg)
+                        elif 'delay' in a:
+                            a, t = a.split("(")
+                            cfg = float("".join(list(t)[0:-1]))
+                            print("delay: {}, t: {}".format(a, cfg))
                         else:
                             cfg = None
 
@@ -328,9 +337,16 @@ class Session_Thread(multiprocessing.Process):
                 for a in iterstring:
                     # load configs from settings to pass as arg
                     # print("(HK) a: ", a)
-                    if a in list(self.settings):
+                    if a in list(self.settings) and a != 'j_f' and 'delay' not in a:
                         # print("{} settings: {}".format(a, self.settings[a]))
                         cfg = self.settings[a]
+                    elif a == 'j_f':
+                        cfg = self.fps
+                        print("fps: ", cfg)
+                    elif 'delay' in a:
+                        a, t = a.split("(")
+                        cfg = float("".join(list(t)[0:-1]))
+                        print("delay: {}, t: {}".format(a, cfg))
                     else:
                         cfg = None
                     # execute the action
@@ -345,9 +361,6 @@ class Session_Thread(multiprocessing.Process):
 
 
     def start_delay(self):
-        # finish pending actions before advancing
-        while len(self.pending) > 0:
-            self.handle_pending()
 
         # inform client process that action is starting from beginning
         self.processIncoming()
@@ -375,18 +388,6 @@ class Session_Thread(multiprocessing.Process):
             time.sleep(0.5)
 
         time.sleep(xtra)
-
-    def handle_pending(self):
-        now = time.time()
-        #[pc_timer, plen, act, cfg, flipx]
-        for p in range(len(self.pending)):
-            if (float(self.pending[p][1]) / 1000) * self.fps <= now - self.pending[p][0]:
-                act = self.pending[p][2]
-                c = self.pending[p][3]
-                fx = self.pending[p][4]
-                #print"handling action {}".format(act))
-                getattr(self.joy, str(act))(c, flipx=fx)
-                self.pending.remove(self.pending[p])
 
 
 
@@ -419,23 +420,23 @@ class Session_Thread(multiprocessing.Process):
 
         info = {'facing': self.facing}
         self.update_queue(info)
-
-    def increase_tuner(self):
-        #print"increase tuner")
-        info = {'command': 'increase tuner'}
-        self.update_queue(info)
-
-    def decrease_tuner(self):
-        #print"decrease tuner")
-        info = {'command': 'decrease tuner'}
-        self.update_queue(info)
-
-    def next_tuner(self):
-        #print"next tuner")
-        info = {'command': 'next tuner'}
-        self.update_queue(info)
-
-    def prev_tuner(self):
-        #print"prev tuner")
-        info = {'command': 'previous tuner'}
-        self.update_queue(info)
+    #
+    # def increase_tuner(self):
+    #     #print"increase tuner")
+    #     info = {'command': 'increase tuner'}
+    #     self.update_queue(info)
+    #
+    # def decrease_tuner(self):
+    #     #print"decrease tuner")
+    #     info = {'command': 'decrease tuner'}
+    #     self.update_queue(info)
+    #
+    # def next_tuner(self):
+    #     #print"next tuner")
+    #     info = {'command': 'next tuner'}
+    #     self.update_queue(info)
+    #
+    # def prev_tuner(self):
+    #     #print"prev tuner")
+    #     info = {'command': 'previous tuner'}
+    #     self.update_queue(info)

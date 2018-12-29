@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import os
-from PIL import Image, ImageTk
 import time
 from custom import CustomNotebook
 import updater
@@ -19,7 +18,7 @@ DPFILES = DATAPATH + "\\" + "files.txt"
 FILES = os.path.join(r".\config", "files.txt")
 DEFAULT = os.path.join(r".\config", "defaults.txt")
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 
 
@@ -28,11 +27,8 @@ TITLE_FONT = ("Verdana", 24)
 LARGE_FONT = ("Verdana", 12)
 SMALL_FONT = ("Verdana", 8)
 HELP_FONT = ("Verdana", 7)
-ICON = os.path.join(r'.\\plugins\\images', "sparlab_logo.ico")
+ICON = os.path.join(r'.\config', "sparlab_logo.ico")
 
-
-# FR_IMG = os.path.join(f'.\\plugins\\images', 'fr.jpg')
-# FL_IMG = os.path.join(f'.\\plugins\\images', 'fl.jpg')
 
 class App(tk.Tk):
 
@@ -41,8 +37,7 @@ class App(tk.Tk):
         Re-points to files user wants to use, on user's commit in File Pointer config panel
         edic is an evaluated dictionary from the panel's textbox
         """
-        self.files = DATAPATH + "\\" + "files.txt"
-        with open(self.files, "w") as f:
+        with open(DPFILES, "w") as f:
             f.write(str(edic))
 
 
@@ -143,6 +138,7 @@ class App(tk.Tk):
         else:
             try:
                 with open(DPFILES, "r") as f:
+                    print("this should work!")
                     self.files = eval(f.read())
                     self.gamefile = self.files["game file"]
                     self.joyfile = self.files["joy file"]
@@ -232,25 +228,25 @@ class App(tk.Tk):
                 info = self.q2.get(0)
                 #print("info from session: ", info)
                 if info != None:
-                    try:
-                        cmd = info['command']
-                        if cmd == 'next tuner':
-                            #print("q2 next tuner")
-                            self.next_tuner()
-                        elif cmd == 'previous tuner':
-                            #print("q2 previous tuner")
-                            self.previous_tuner()
-                        elif cmd == 'increase tuner':
-                            #print("q2 increase tuner")
-                            self.increase_tuner()
-                        elif cmd == 'decrease tuner':
-                            #print("q2 decrease tuner")
-                            self.decrease_tuner()
-                    except Exception as e:
-                        # print(e)
-                        pass
-
-                        #print(msg)
+                    # try:
+                    #     cmd = info['command']
+                    #     if cmd == 'next tuner':
+                    #         print("q2 next tuner")
+                    #         # self.next_tuner()
+                    #     elif cmd == 'previous tuner':
+                    #         print("q2 previous tuner")
+                    #         # self.previous_tuner()
+                    #     elif cmd == 'increase tuner':
+                    #         #print("q2 increase tuner")
+                    #         # self.increase_tuner()
+                    #     elif cmd == 'decrease tuner':
+                    #         #print("q2 decrease tuner")
+                    #         # self.decrease_tuner()
+                    # except Exception as e:
+                    #     # print(e)
+                    #     pass
+                    #
+                    #     #print(msg)
 
                     try:
                         facing = info['facing']
@@ -386,10 +382,6 @@ class App(tk.Tk):
         btnframe = tk.Frame(tab)
         btnframe.pack(side='top', anchor='n', fill='x')
 
-        # self.img = Image.open(image[0])
-        # w, h = self.img.size
-        # btn_img = ImageTk.PhotoImage(self.img.resize(image[1]))
-        # imgs.append(btn_img)
 
         # "Settings", "Joy Functions", "Game Functions",
         self.panelbtn = ttk.Combobox(btnframe, width=30, values=["Flip X Axis", "Toggle Joy State", "File Pointer", "HK Sheet", "Documentation", "FAQ"], state='readonly')
@@ -417,20 +409,20 @@ class App(tk.Tk):
 
         self.fpsvar = tk.StringVar(value=str(self.fps))
         self.fpstuner = tk.Spinbox(fixbtnframe, to=1000, from_=0, textvariable=self.fpsvar, width=4, command=lambda: self.tune_var())
-        l = tk.Label(fixbtnframe, text='fps', width=5, font='Verdana 10', bg='#ff4242')
+        l = tk.Label(fixbtnframe, text='fps', width=5, font='Verdana 10') #ff4242'
         l.pack(side='left', anchor='nw')
 
-        self.togglelabs.append(l)
+        # self.togglelabs.append(l)
         self.delay_tuners['fps'] = self.fpsvar
         self.fpstuner.pack(side='left', anchor='nw')
         # adjusting action interval time on main screen
         self.aivar = tk.StringVar(value=str(self.action_interval_t))
-        self.aituner = tk.Spinbox(fixbtnframe, to=1000, from_=0, textvariable=self.aivar, increment=0.1, width=4, command=lambda: self.tune_var())
+        self.aituner = tk.Spinbox(fixbtnframe, to=100.00, from_=0.00, textvariable=self.aivar, increment=0.01, width=5, command=lambda: self.tune_var())
         l = tk.Label(fixbtnframe, text='ADI', width=4, font='Verdana 10')
         l.pack(side='left', anchor='nw', padx=5)
 
         self.delay_tuners['ADI'] = self.aivar
-        self.togglelabs.append(l)
+        # self.togglelabs.append(l)
         self.aituner.pack(side='left', anchor='nw')
         # self.hk_sheet_btn = ttk.Button(btnframe, text="HK Sheet", command=lambda: self.hks_popup())
         # self.hk_sheet_btn.pack(side='right', anchor="ne")
@@ -447,8 +439,8 @@ class App(tk.Tk):
                 l = tk.Label(fixbtnframe, text=notation, width=2, font='Verdana 10')
                 l.pack(side='left', anchor='n', padx=10)
 
-                self.togglelabs.append(l)
-                tk.Spinbox(fixbtnframe, to=100.0, from_=0.0, textvariable=var, increment=0.1, width=4, command=lambda: self.tune_var()).pack(side='left', anchor='n')
+                # self.togglelabs.append(l)
+                tk.Spinbox(fixbtnframe, to=100.00, from_=0.00, textvariable=var, increment=0.01, width=5, command=lambda: self.tune_var()).pack(side='left', anchor='n')
 
 
 
@@ -458,14 +450,14 @@ class App(tk.Tk):
 
 
     def previous_tuner(self):
-        self.togglelabs[self.cti].config(bg=self.cget('bg'))
+        # self.togglelabs[self.cti].config(bg=self.cget('bg'))
         self.cti = self.cti - 1 if self.cti > 0 else len(self.togglelabs) - 1
-        self.togglelabs[self.cti].config(bg='#ff4242')
+        # self.togglelabs[self.cti].config(bg='#ff4242')
 
     def next_tuner(self):
-        self.togglelabs[self.cti].config(bg=self.cget('bg'))
+        # self.togglelabs[self.cti].config(bg=self.cget('bg'))
         self.cti = self.cti + 1 if self.cti < len(self.togglelabs) - 1 else 0
-        self.togglelabs[self.cti].config(bg='#ff4242')
+        # self.togglelabs[self.cti].config(bg='#ff4242')
 
     def increase_tuner(self):
         tunerkey = self.togglelabs[self.cti].cget('text')
@@ -654,7 +646,7 @@ class App(tk.Tk):
         if self.playing == False:
             self.playing = True
 
-            #self.load_settings_functions()
+            self.load_settings_functions()
 
             # split by space
             moveslist = self.lasttxt.split(" ")
@@ -671,7 +663,7 @@ class App(tk.Tk):
                 for ind, _d in enumerate(list(self.delay_tuners)):
                     #print"ind: {}; _d: {}".format(ind, _d))
                     if i == _d:
-                        actlist.append((None, None, _d))
+                        actlist.append((None, _d))
 
 
                 for k,v in self.cfg.items():
@@ -689,7 +681,7 @@ class App(tk.Tk):
 
 
                     if v["String"] != None and v["Notation"] == i and leftbracketpassed == True:
-                        actlist.append((self.cfg[k]["Notation"], self.cfg[k]["Image"], self.cfg[k]["String"]))
+                        actlist.append((self.cfg[k]["Notation"], self.cfg[k]["String"]))
 
                         if rightbracketpassed == True:
                             break
@@ -719,27 +711,7 @@ class App(tk.Tk):
         """Temp replacement for Settings, this function will be ran every time user
             presses play or presses 'load settings + functions'"""
 
-        with open(SETTINGS, 'r') as f:
-            settings = f.read()
-            f.close()
-
-        # string to python dict
-        self.settings = eval(settings)
-
-        path, filename = os.path.split(self.gamefile)
-        listoffolders = path.split("\\")
-        self.gametitle = listoffolders[-1]
-        cfg = os.path.join(path, filename)
-        with open(cfg, 'r') as f:
-            self.cfg = eval(f.read())
-            f.close()
-
-        path, filename = os.path.split(self.joyfile)
-        joycfg = os.path.join(path, filename)
-        with open(joycfg, "r") as f:
-            # string to python dict
-            self.joy_cfg = eval(f.read())
-            f.close()
+        self.point_to_files(self.files)
 
 
 
@@ -812,7 +784,7 @@ class App(tk.Tk):
             self.settings = settext
             info = {'settings': self.settings}
 
-            with open('.\\config\\settings.txt', "w") as f:
+            with open(self.settingsfile, "w") as f:
                 f.write(str(self.settings))
                 f.close()
 
