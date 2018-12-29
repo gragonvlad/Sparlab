@@ -67,6 +67,7 @@ To install: 'devcon.exe install ScpVBus.inf Root\ScpVBus'
 To uninstall:'devcon.exe remove Root\ScpVBus'
 
 
+Link to built & signed application download: https://www.umensch.com/downloads/
 
 
 For more information, email john.ward@umensch.com 
